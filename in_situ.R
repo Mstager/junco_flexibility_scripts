@@ -9,7 +9,7 @@ data = read.csv("TableS1.csv")
 
 #get elevation for each site
 library(googleway)
-data$elev <- google_elevation(data.frame(lat=data$Latitude, lon=data$Longitude),  key = "AIzaSyDHkOaCwImKJY-R5wTEjNdfgbFCwsVRDnA")$results$elevation
+data$elev <- google_elevation(data.frame(lat=data$Latitude, lon=data$Longitude),  key = "API_KEY_here")$results$elevation
 
 #formatting dates
 data$Capture.Date2 = as.Date(data$Capture.Date, "%m/%d/%y")
