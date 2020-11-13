@@ -25,4 +25,4 @@ Associated data are available in the supplementary materials:
 
 3. TableS3.csv # *A file containing data for acclimated individuals*
 
-Raw reads will be available from the NCBI Sequence Read Archive (SUB8384841).
+Raw reads will be available from the NCBI Sequence Read Archive (PRJNA678344).
