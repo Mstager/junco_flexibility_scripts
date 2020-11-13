@@ -7,17 +7,17 @@ This repository includes scripts to replicate the analyses in:
 
 Included are:
 
-* junco_insitu.r # *R script for running analyses on in situ data*
+* junco_insitu.R # *R script for running analyses on in situ data*
 
-* pop_flex.r # *R script for running analyses on acclimated individuals*
+* pop_flex.R # *R script for running analyses on acclimated individuals*
 
 * *Commands for processing RAD-Seq data: demultiplexing using STACKS, mapping reads with bwa, variant calling with STACKS, and filtering with vcftools.*
 
-* RDA.r # *R script to run redundancy analysis on population genetic data*
+* RDA.R # *R script to run redundancy analysis on population genetic data*
 
 
 
-Associated data are available in the supplementary materials. You will need:
+Associated data are available in the supplementary materials:
 
 1. TableS1.csv # *A file containing data for individuals sampled in situ*
 
