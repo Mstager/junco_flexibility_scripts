@@ -1,0 +1,46 @@
+#Commands to process (demultiplex, map, call variants, filter SNPs) two lanes of RAD data, used in RDA in: Stager M, Senner NR, Swanson DL, Carling MD, Grieves TJ, and Cheviron ZA. 2020. Temperature heterogeneity correlates with intraspecific variation in physiological flexibility in a small endotherm. bioRxiv.
+
+#demultiplex with STACKS
+process_radtags -f ./ZCMS001_S115_L007_R1_001.fastq.gz -i gzfastq --renz_1 ecoRI -b ./Junco_barcodes_lane1.txt -r -c -q -E phred33 -o ./ --adapter_1 CTCTTTCCCTACACGACGCTCTTCCGATCT --barcode_dist_1 2
+process_radtags -f ./ZCMS002_S116_L008_R1_001.fastq.gz -i gzfastq --renz_1 ecoRI -b ./Junco_barcodes_lane2.txt -r -c -q -E phred33 -o ./ --adapter_1 CTCTTTCCCTACACGACGCTCTTCCGATCT --barcode_dist_1 2
+
+#ref mapping w/ bwa:
+mkdir sam
+./genome_map.sh
+
+#convert resulting sam to bam files
+mkdir bam
+./convertsam.sh
+
+#sort
+mkdir bam_sorted
+./sort_bam.sh
+
+####################################
+#SNPS across the genus
+
+#execute STACKS variant calling using 186 individuals (removed 6 w/ less than 100,000 reads mapped): 
+ref_map.pl --samples ./bam_sorted --popmap ./Pop_map186.txt -o ./ -T 25 -X "populations: -p 4 --vcf --hwe --write_random_snp" 
+
+#filtering in vcftools to remove indels, non-biallelic sites, all sites with <5× and >50× coverage, minor allele count below 3 and more than 50% missing data
+vcftools --vcf populations.snps.vcf  --max-missing 0.5 --min-meanDP 5 --max-meanDP 50 --mac 3  --remove-indels --min-alleles 2 --max-alleles 2 --recode --recode-INFO-all --out filtered_snps 
+
+#maximum threshold of missing data per sample of 0.6
+vcftools --vcf filtered_snps.recode.vcf   --missing-indv
+mawk '$5 > 0.6' out.imiss | cut -f1 > lowDP.indv
+vcftools --vcf filtered_snps.recode.vcf  --remove lowDP.indv  --recode --recode-INFO-all --out filtered_snps2 
+
+#remove every position with 95% missing data
+vcftools --vcf filtered_snps2.recode.vcf  --max-missing 0.95 --recode --recode-INFO-all --out filtered_snps3 
+
+#convert variant calls to snps for hwe filter
+vcfallelicprimitives filtered_snps3.recode.vcf --keep-info --keep-geno > filtered_snps.prim.vcf
+
+#filter hwe by population using script written by Chris Hollenbeck
+#script available here: https://github.com/jpuritz/dDocent/raw/master/scripts/filter_hwe_by_pop.pl
+./filter_hwe_by_pop.pl -v filtered_snps.prim.vcf -p ./Pop_map186.txt -o filtered_snps4
+
+
+#plink format for R
+vcftools --vcf filtered_snps4.recode.vcf --plink
+plink2 --file out --recodeA
