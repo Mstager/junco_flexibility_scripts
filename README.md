@@ -28,6 +28,8 @@ Included are:
   * *This script draws on TableS3.csv from the Supplementary Materials*
 
 * RADSeq_PE_processing 
-  * *Commands for processing RAD-Seq data from 95 individuals used in acclimation study*
+  * *Commands for processing parired-end RAD-Seq data from 95 individuals used in acclimation study*
   * *Associated bash commands in genome_map_pe.sh, convertsam.sh, sort_bam.sh, and merge_bam.sh*
   * *Raw reads used here have been submitted to the NCBI Sequence Read Archive (PRJNA678344)*
+  * *Barcodes provided in Junco_barcodes_lane3.txt (also in TableS3.csv in the Supp. Mat.)*
+  * *Popmap_acc.txt is a population map used by STACKS for 89 individuals (3 individuals that failed to sequence not included), this file can be split into population-specific files for use in vcftools when calculating pairwise FST*
