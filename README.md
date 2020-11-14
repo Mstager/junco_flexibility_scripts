@@ -16,7 +16,7 @@ Included are:
   * *Associated bash commands in genome_map.sh, convertsam.sh, and sort_bam.sh*
   * *Raw reads used here have been submitted to the NCBI Sequence Read Archive (PRJNA678344)*
   * *Barcodes provided in Junco_barcodes_lane1.txt and Junco_barcodes_lane2.txt (also in TableS2.csv in the Supp. Mat.)*
-  * *Pop_map186.txt is a population map used by STACKS for 186 individuals (6 individuals that failed to sequence not included)*
+  * *Pop_map186.txt is a population map used by STACKS for 186 individuals (excluding 6 individuals that failed to sequence)*
 
 * RDA.R 
   * *R script to run redundancy analysis on population genetic data*
@@ -32,4 +32,4 @@ Included are:
   * *Associated bash commands in genome_map_pe.sh, convertsam.sh, sort_bam.sh, and merge_bam.sh*
   * *Raw reads used here have been submitted to the NCBI Sequence Read Archive (PRJNA678344)*
   * *Barcodes provided in Junco_barcodes_lane3.txt (also in TableS3.csv in the Supp. Mat.)*
-  * *Popmap_acc.txt is a population map used by STACKS for 89 individuals (3 individuals that failed to sequence not included), this file can be split into population-specific files for use in vcftools when calculating pairwise FST*
+  * *Popmap_acc.txt is a population map used by STACKS for 89 individuals (excluding 3 individuals that failed to sequence); this file can be split into population-specific files for use in vcftools when calculating pairwise FST*
