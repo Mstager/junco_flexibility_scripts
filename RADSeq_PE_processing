@@ -33,7 +33,7 @@ samtools rmdup ./FILENAME.bam ./dup_removed/FILENAME.bam
 ###########################################################################
 #variant calling for 89 individuals using STACKS
 
-ref_map.pl --samples ./dup_removed --popmap ./pop_map2.txt -o ./ -T 25 -X "populations: -p 5 --write_random_snp --vcf --hwe" #export SNPs shared among all 5 population, one snp per locus in vcf format
+ref_map.pl --samples ./dup_removed --popmap ./Popmap_acc.txt -o ./ -T 25 -X "populations: -p 5 --write_random_snp --vcf --hwe" #export SNPs shared among all 5 population, one snp per locus in vcf format
 
 
 ######################################################################
@@ -50,7 +50,7 @@ vcfallelicprimitives filtered_snps.recode.vcf --keep-info --keep-geno > filtered
 
 ###########################
 #calculate FST in vcftools
-#pop_map2.txt must be split into separate txt files for each population
+#Popmap_acc.txt must be split into separate txt files for each population
 
 vcftools --vcf filtered_snps2.recode.vcf --weir-fst-pop aikeni.txt --weir-fst-pop dorsalis.txt --out aik_dor
 vcftools --vcf filtered_snps2.recode.vcf --weir-fst-pop aikeni.txt --weir-fst-pop phaeonotus.txt --out aik_pal
