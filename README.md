@@ -2,10 +2,10 @@
 
 This repository includes scripts to replicate the analyses in:
 
-***Stager M, Senner NR, Swanson DL, Carling MD, Grieves TJ, and Cheviron ZA. 2020. Temperature heterogeneity correlates with intraspecific variation in physiological flexibility in a small endotherm. bioRxiv.***
+#### Stager M, Senner NR, Swanson DL, Carling MD, Grieves TJ, and Cheviron ZA. 2020. Temperature heterogeneity correlates with intraspecific variation in physiological flexibility in a small endotherm. bioRxiv. ####
 
 
-Included are:
+**Included are:**
 
 * junco_insitu.R  
   * *R script for running analyses on in situ data*
