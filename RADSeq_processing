@@ -41,6 +41,5 @@ vcfallelicprimitives filtered_snps3.recode.vcf --keep-info --keep-geno > filtere
 ./filter_hwe_by_pop.pl -v filtered_snps.prim.vcf -p ./Pop_map186.txt -o filtered_snps4
 
 
-#plink format for R
+#plink format for R adegenet
 vcftools --vcf filtered_snps4.recode.vcf --plink
-plink2 --file out --recodeA
