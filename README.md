@@ -11,7 +11,7 @@ Included are:
 
 * pop_flex.R # *R script for running analyses on acclimated individuals*
 
-* *Commands for processing RAD-Seq data: demultiplexing using STACKS, mapping reads with bwa, variant calling with STACKS, and filtering with vcftools.*
+* RADSeq_processing *Commands for processing RAD-Seq data (demultiplexing w/ STACKS, map w/ bwa, variant calling w/ STACKS, filtering w/ vcftools)*
 
 * RDA.R # *R script to run redundancy analysis on population genetic data*
 
