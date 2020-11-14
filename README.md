@@ -20,7 +20,7 @@ Included are:
 
 * RDA.R 
   * *R script to run redundancy analysis on population genetic data*
-  * *This script uses Junco_SNPs.raw, a plink file containing 21971 SNPs generated with above RADSeq_processing commands*
+  * *This script uses a plink file containing 21971 SNPs generated with above RADSeq_processing commands*
   * *This script draws on TableS2.csv from the Supplementary Materials*
   
 * pop_flex.R 
