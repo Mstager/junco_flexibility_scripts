@@ -1,0 +1,67 @@
+#Commands to process (demultiplex, map, call variants, filter SNPs) one lane of PE RAD data from acclimated juncos: Stager M, Senner NR, Swanson DL, Carling MD, Grieves TJ, and Cheviron ZA. 2020. Temperature heterogeneity correlates with intraspecific variation in physiological flexibility in a small endotherm. bioRxiv.
+
+
+#demultiplex 
+process_radtags --paired -1 ./ZCMS003_1.fq.gz -2 ./ZCMS003_2.fq.gz -i gzfastq --renz_1 ecoRI -b ./Junco_barcodes_lane3.txt -r -c -q -E phred33 -o ./processed_pe_rads --adapter_1 CTCTTTCCCTACACGACGCTCTTCCGATCT --adapter_2 GTCTAGCCTTCTCGAGCATACGGCAGAAGACG --barcode_dist_1 2
+
+
+#ref mapping w/ bwa for paired reads, rem1 and rem2 separately:
+mkdir sam
+./genome_map_pe.sh
+./genome_map_rem1.sh
+./genome_map_rem2.sh
+
+#convert resulting sam to bam files
+mkdir bam
+./convertsam.sh
+
+#sort
+mkdir bam_sorted
+./sort_bam.sh
+
+#index into same folder w/ sorted bams
+./index_bam.sh
+
+#merge
+mkdir merged_mapped_reads
+./bam_merge.sh
+
+#remove duplicates for each file
+mkdir dup_removed
+samtools rmdup ./FILENAME.bam ./dup_removed/FILENAME.bam
+
+###########################################################################
+#variant calling for 89 individuals using STACKS
+
+ref_map.pl --samples ./dup_removed --popmap ./pop_map2.txt -o ./ -T 25 -X "populations: -p 5 --write_random_snp --vcf --hwe" #export SNPs shared among all 5 population, one snp per locus in vcf format
+
+
+######################################################################
+#filtering with vcftools per ddocent filtering tutorial (http://www.ddocent.com/filtering/)
+#starting with 282929 sites exported from stacks after -p = 5 
+vcftools --vcf populations.snps.vcf  --max-missing 0.9 --min-meanDP 20 --max-meanDP 300 --remove-indels --maf 0.05 --min-alleles 2 --max-alleles 2 --recode --recode-INFO-all --out filtered_snps 
+
+#convert variant calls to snps for hwe filter
+vcfallelicprimitives filtered_snps.recode.vcf --keep-info --keep-geno > filtered_snps.prim.vcf
+
+#filter hwe by population using script written by Chris Hollenbeck
+#script available here: https://github.com/jpuritz/dDocent/raw/master/scripts/filter_hwe_by_pop.pl
+./filter_hwe_by_pop.pl -v filtered_snps.prim.vcf -p ./pop_map2.txt -o filtered_snps2 
+
+###########################
+#calculate FST in vcftools
+#pop_map2.txt must be split into separate txt files for each population
+
+vcftools --vcf filtered_snps2.recode.vcf --weir-fst-pop aikeni.txt --weir-fst-pop dorsalis.txt --out aik_dor
+vcftools --vcf filtered_snps2.recode.vcf --weir-fst-pop aikeni.txt --weir-fst-pop phaeonotus.txt --out aik_pal
+vcftools --vcf filtered_snps2.recode.vcf --weir-fst-pop aikeni.txt  --weir-fst-pop shufeldti.txt --out aik_shu
+vcftools --vcf filtered_snps2.recode.vcf --weir-fst-pop aikeni.txt  --weir-fst-pop thurberi.txt --out aik_thu
+
+vcftools --vcf filtered_snps2.recode.vcf --weir-fst-pop dorsalis.txt  --weir-fst-pop phaeonotus.txt --out dor_pal
+vcftools --vcf filtered_snps2.recode.vcf --weir-fst-pop dorsalis.txt   --weir-fst-pop shufeldti.txt --out dor_shu
+vcftools --vcf filtered_snps2.recode.vcf --weir-fst-pop dorsalis.txt   --weir-fst-pop thurberi.txt --out dor_thu
+
+vcftools --vcf filtered_snps2.recode.vcf --weir-fst-pop phaeonotus.txt   --weir-fst-pop shufeldti.txt --out pal_shu
+vcftools --vcf filtered_snps2.recode.vcf --weir-fst-pop phaeonotus.txt   --weir-fst-pop thurberi.txt --out pal_thu
+
+vcftools --vcf filtered_snps2.recode.vcf --weir-fst-pop shufeldti.txt   --weir-fst-pop thurberi.txt --out shu_thu
