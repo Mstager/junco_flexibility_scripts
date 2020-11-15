@@ -21,11 +21,11 @@ Included are:
 * RDA.R 
   * *R script to run redundancy analysis on population genetic data*
   * *This script uses a plink file containing 21971 SNPs generated with above RADSeq_processing commands*
-  * *This script draws on TableS2.csv from the Supplementary Materials*
+  * *This script draws on TableS5.csv from the Supplementary Materials*
   
 * pop_flex.R 
   * *R script for running analyses on acclimated individuals*
-  * *This script draws on TableS3.csv from the Supplementary Materials*
+  * *This script draws on TableS6.csv from the Supplementary Materials*
 
 * RADSeq_PE_processing 
   * *Commands for processing parired-end RAD-Seq data from 95 individuals used in acclimation study*
