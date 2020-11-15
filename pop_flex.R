@@ -1,6 +1,6 @@
 #This script runs analyses to quantify differences among acclimated Junco populations as shown in: Stager M, Senner NR, Swanson DL, Carling MD, Grieves TJ, and Cheviron ZA. 2020. Temperature heterogeneity correlates with intraspecific variation in physiological flexibility in a small endotherm. bioRxiv.
 
-data<-read.csv("TableS3.csv") #this dataset is included in the supplementary materials as well as on github
+data<-read.csv("TableS6.csv") #this dataset is included in the supplementary materials
 
 ################################################
 #Mantel Test
@@ -19,7 +19,7 @@ for (i in 1:5){
 	}
 }
 
-#pairwise genetic distance: Fst/(1-Fst) using Weir's weighted theta, values reported in TableS6
+#pairwise genetic distance: Fst/(1-Fst) using Weir's weighted theta, values reported in TableS4
 #listed in order to match lats/longs above: J.h.shufeldti, J.h.aikeni, J.p.palliatus, J.h.dorsalis, J.h.thurberi
 fst = matrix (c(c(NA,0.023624,0.051234,0.018739,0.018673), 
 				c(0.023624,NA,0.051391,0.026072,0.026478), 
