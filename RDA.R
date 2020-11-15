@@ -12,7 +12,7 @@ SNPS <- read.PLINK("Junco_SNPs.raw")
 gen <- as.data.frame(SNPS)
 dim(gen)
 
-geo<-read.csv("TableS2.csv") #georeferenced samples
+geo<-read.csv("TableS5.csv") #georeferenced samples listed in Supp. Mat. TableS5
 geo <- geo[geo$Catalog_number!="6056" & geo$Catalog_number!="110508" & geo$Catalog_number!="117690" & geo$Catalog_number!="118252" & geo$Catalog_number!="229176" & geo$Catalog_number!="231996" & geo$Catalog_number!="648103" & geo$Catalog_number!="648671" & geo$Catalog_number!="232004" & geo$Catalog_number!="183387" & geo$Catalog_number!="232018",] #remove 11 individuals that were filtered during RAD processing
 
 sum(is.na(gen)) #total number of sites to impute
