@@ -2,13 +2,13 @@
 
 This repository includes scripts to replicate the analyses in:
 
-**Stager M, Senner NR, Swanson DL, Carling MD, Grieves TJ, and Cheviron ZA. 2020. Temperature heterogeneity correlates with intraspecific variation in physiological flexibility in a small endotherm. bioRxiv: 10.1101/2020.11.16.383877.**
+**Stager M, Senner NR, Swanson DL, Carling MD, Eddy DK, Grieves TJ, and Cheviron ZA. 2020. Temperature heterogeneity correlates with intraspecific variation in physiological flexibility in a small endotherm. bioRxiv: 10.1101/2020.11.16.383877.**
 
 
 Included are:
 
 * junco_insitu.R  
-  * *R script for running analyses on in situ data*
+  * *R script for running analyses on in situ phenotypic data*
   * *This script draws on TableS1.csv from the Supplementary Materials*
 
 * RADSeq_processing 
@@ -24,7 +24,7 @@ Included are:
   * *This script draws on TableS5.csv from the Supplementary Materials*
   
 * pop_flex.R 
-  * *R script for running analyses on acclimated individuals*
+  * *R script for running analyses on phenotypic data from acclimated individuals*
   * *This script draws on TableS6.csv from the Supplementary Materials*
 
 * RADSeq_PE_processing 
