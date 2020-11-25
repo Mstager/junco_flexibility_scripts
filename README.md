@@ -13,11 +13,11 @@ Included are:
   * *This script takes minutes to run on my dinosaur of a laptop (2012 MacBook Pro)*
 
 * RADSeq_processing 
-  * *Commands for processing RAD-Seq data from 192 Junco sp. (demultiplexing w/ STACKS, map w/ bwa, variant calling w/ STACKS, filtering w/ vcftools)*
+  * *Commands for processing RAD-Seq data from 192 Junco sp. (demultiplexing w/ STACKS ver. 2.1, map w/ bwa, variant calling w/ STACKS, filtering w/ vcftools)*
   * *Associated bash commands in genome_map.sh, convertsam.sh, and sort_bam.sh*
   * *Raw reads used here are available from the NCBI Sequence Read Archive (PRJNA678344)*
   * *Barcodes provided in Junco_barcodes_SAMN16793657.txt and Junco_barcodes_SAMN16793658.txt (also in TableS5.csv in the Supp. Mat.)*
-  * *Pop_map186.txt is a population map used by STACKS for 186 individuals (excluding 6 individuals that failed to sequence)*
+  * *Pop_map186.txt is a population map used by STACKS ver 2.1 for 186 individuals (excluding 6 individuals that failed to sequence)*
   * *This script can take a couple days to run on a server with 32 cores, ~386 GB RAM*
 
 * RDA.R 
@@ -36,5 +36,5 @@ Included are:
   * *Associated bash commands in genome_map_pe.sh, convertsam.sh, sort_bam.sh, index_bam.sh, and merge_bam.sh*
   * *Raw reads used here are available from the NCBI Sequence Read Archive (PRJNA678344)*
   * *Barcodes provided in Junco_barcodes_SAMN16793659.txt (also in TableS6.csv in the Supp. Mat.)*
-  * *Popmap_acc.txt is a population map used by STACKS for 89 individuals (excluding 6 individuals that failed to sequence); this file can be split into population-specific files for use in vcftools when calculating pairwise FST*
+  * *Popmap_acc.txt is a population map used by STACKS ver 2.1 for 89 individuals (excluding 6 individuals that failed to sequence); this file can be split into population-specific files for use in vcftools when calculating pairwise FST*
    * *This script can take a couple days to run on a server with 32 cores, ~386 GB RAM*
