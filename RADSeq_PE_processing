@@ -1,8 +1,9 @@
 #Commands to process (demultiplex, map, call variants, filter SNPs) one lane of PE RAD data from acclimated juncos: Stager M, Senner NR, Swanson DL, Carling MD, Grieves TJ, and Cheviron ZA. 2020. Temperature heterogeneity correlates with intraspecific variation in physiological flexibility in a small endotherm. bioRxiv.
 
+#Raw reads used in this analysis can be found at: https://www.ncbi.nlm.nih.gov/sra/SRX9519064
 
 #demultiplex 
-process_radtags --paired -1 ./ZCMS003_1.fq.gz -2 ./ZCMS003_2.fq.gz -i gzfastq --renz_1 ecoRI -b ./Junco_barcodes_lane3.txt -r -c -q -E phred33 -o ./processed_pe_rads --adapter_1 CTCTTTCCCTACACGACGCTCTTCCGATCT --adapter_2 GTCTAGCCTTCTCGAGCATACGGCAGAAGACG --barcode_dist_1 2
+process_radtags --paired -1 ./Filename_1.fq.gz -2 ./Filename_2.fq.gz -i gzfastq --renz_1 ecoRI -b ./Junco_barcodes_SAMN16793659.txt -r -c -q -E phred33 -o ./processed_pe_rads --adapter_1 CTCTTTCCCTACACGACGCTCTTCCGATCT --adapter_2 GTCTAGCCTTCTCGAGCATACGGCAGAAGACG --barcode_dist_1 2
 
 
 #ref mapping w/ bwa for paired reads, rem1 and rem2 separately:
