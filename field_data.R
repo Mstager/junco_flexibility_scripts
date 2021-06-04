@@ -15,11 +15,9 @@ data$elev <- google_elevation(data.frame(lat=data$Latitude, lon=data$Longitude),
 data$Capture.Date2 = as.Date(data$Capture.Date, "%m/%d/%y")
 data$Capture.Date = format(data$Capture.Date2, "%d/%m/%Y")
 
-data$captivity <- as.Date(data$SMR.Date, format="%m/%d/%y")-data$Capture.Date2
+#how long were individuals held?
+data$captivity <- as.Date(data$Msum.Date, format="%m/%d/%y")-data$Capture.Date2
 mean(data$captivity)
-
-#number of site-days
-length(unique(paste(data2$Location, data2$Capture.Date)))
 
 df = data.frame(unique(data$Latitude),unique(data$Longitude))
 names(df) = c("Latitude", "Longitude")
@@ -30,13 +28,13 @@ for (i in 1:nrow(df)) {
 df$site = c(1:18) 
 
 #Get interpolated weather data from Daymet for the year of and the year preceding measure
+library(daymetr)
 rm(tmin)
 rm(tmax)
 rm(prcp)
 rm(dayl)
 rm(wvp)
 rm(srad)
-
 for (i in 1:nrow(df)){
 	clim <- download_daymet(site = df$site[i],
 		lat = df$Latitude[i], 
@@ -82,9 +80,10 @@ data2$Taxon = as.factor(data2$Taxon)
 data2$Taxon = relevel(data2$Taxon, ref="J. h. oreganus group")
 
 #Add mean weather variables for 14 days preceding measurement
-windows = data.frame(matrix(ncol=8,nrow=8));
+windows = data.frame(matrix(ncol=8,nrow=8)) #store AIC values in table (shown as Table S2)
 names(windows)=c("window","tmin", "tmax", "prcp", "dayl", "wvp", "srad","range")
 
+library(arm)
 m = 1
 for (k in 7:14) {
 	for (i in 1:nrow(data2)){
@@ -97,20 +96,20 @@ for (k in 7:14) {
 			data2$srad[i] <- mean(srad$value[(which(srad$Date == data2$Capture.Date[i] & tmin$latitude==data2$Latitude[i])-k):(which(srad$Date == data2$Capture.Date[i] & tmin$latitude==data2$Latitude[i])-1)])
 	}
 	windows$window[m]<-paste(1,':', k)
-	windows$tmin[m]<-AIC(lm(VO2max~rescale(SMR_Mass) + Taxon * rescale(tmin), data2)) 
-	windows$tmax[m]<-AIC(lm(VO2max~rescale(SMR_Mass) + Taxon * rescale(tmax), data2)) 
-	windows$prcp[m]<-AIC(lm(VO2max~rescale(SMR_Mass) + Taxon * rescale(prcp), data2)) 
-	windows$dayl[m]<-AIC(lm(VO2max~rescale(SMR_Mass) + Taxon * rescale(dayl), data2)) 
-	windows$wvp[m]<-AIC(lm(VO2max~rescale(SMR_Mass) + Taxon * rescale(wvp), data2)) 
-	windows$range[m]<-AIC(lm(VO2max~rescale(SMR_Mass) + Taxon * rescale(range), data2))
-	windows$srad[m]<-AIC(lm(VO2max~rescale(SMR_Mass) + Taxon * rescale(srad), data2))
+	windows$tmin[m]<-AIC(lm(Msum~rescale(Mass) + Taxon * rescale(tmin), data2)) 
+	windows$tmax[m]<-AIC(lm(Msum~rescale(Mass) + Taxon * rescale(tmax), data2)) 
+	windows$prcp[m]<-AIC(lm(Msum~rescale(Mass) + Taxon * rescale(prcp), data2)) 
+	windows$dayl[m]<-AIC(lm(Msum~rescale(Mass) + Taxon * rescale(dayl), data2)) 
+	windows$wvp[m]<-AIC(lm(Msum~rescale(Mass) + Taxon * rescale(wvp), data2)) 
+	windows$range[m]<-AIC(lm(Msum~rescale(Mass) + Taxon * rescale(range), data2))
+	windows$srad[m]<-AIC(lm(Msum~rescale(Mass) + Taxon * rescale(srad), data2))
 	m = m+1 
 } 
 
-AIC(lm(VO2max~rescale(SMR_Mass) + Taxon, data2)) #null
-AIC(lm(VO2max~rescale(SMR_Mass) + Taxon + rescale(elev), data2)) 	
+AIC(lm(Msum~rescale(Mass) + Taxon, data2)) #null
+AIC(lm(Msum~rescale(Mass) + Taxon + rescale(elev), data2)) 	
 
-#best window
+#best window from above
 j = 1
 k = 8
 for (i in 1:nrow(data2)){
@@ -119,15 +118,15 @@ for (i in 1:nrow(data2)){
 
 cor(data2$tmin, data2$tmax) #0.96
 
-mod1 <- lm(VO2max~rescale(SMR_Mass) + Taxon * rescale(range), data2)#**** 
+data2$Taxon = relevel(data2$Taxon, ref="J. h. oreganus group")
+mod1 <- lm(Msum~rescale(Mass) + Taxon * rescale(range), data2)#**** 
 summary(mod1)
-#plot(mod1)
-
-#significance of season
-AIC(mod1)-AIC(lm(VO2max~rescale(SMR_Mass) + Taxon * rescale(range)+Season, data2))
 
 #significance of interaction term
-AIC(mod1)-AIC(lm(VO2max~rescale(SMR_Mass) + Taxon + rescale(range), data2))
+AIC(mod1)-AIC(lm(Msum~rescale(Mass) + Taxon + rescale(range), data2))
+
+#significance of Season 
+AIC(mod1)-AIC(lm(Msum~rescale(Mass) + Taxon * rescale(range) + Season, data2))
 
 
 
@@ -168,17 +167,17 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
-df_GH = data.frame(range = seq(from = min(data2$range), to = max(data2$range), by = .25), SMR_Mass = mean(data2$SMR_Mass[data2$Taxon=="J. h. caniceps"]), Taxon = "J. h. caniceps")
-df_PS = data.frame(range = seq(from = min(data2$range), to = max(data2$range), by = .25), SMR_Mass = mean(data2$SMR_Mass[data2$Taxon=="J. h. mearnsi"]), Taxon = "J. h. mearnsi")
-df_OR= data.frame(range = seq(from = min(data2$range), to = max(data2$range), by = .25), SMR_Mass = mean(data2$SMR_Mass[data2$Taxon=="J. h. oreganus group"]), Taxon = "J. h. oreganus group")
-df_SC= data.frame(range = seq(from = min(data2$range), to = max(data2$range), by = .25), SMR_Mass = mean(data2$SMR_Mass[data2$Taxon=="J. h. hyemalis"]), Taxon = "J. h. hyemalis")
-df_YE = data.frame(range = seq(from = min(data2$range), to = max(data2$range), by = .25), SMR_Mass = mean(data2$SMR_Mass[data2$Taxon=="J. p. palliatus"]), Taxon = "J. p. palliatus")
+df_caniceps = data.frame(range = seq(from = min(data2$range), to = max(data2$range), by = .25), Mass = mean(data2$Mass[data2$Taxon=="J. h. caniceps"]), Taxon = "J. h. caniceps")
+df_mearnsi = data.frame(range = seq(from = min(data2$range), to = max(data2$range), by = .25), Mass = mean(data2$Mass[data2$Taxon=="J. h. mearnsi"]), Taxon = "J. h. mearnsi")
+df_oreganus= data.frame(range = seq(from = min(data2$range), to = max(data2$range), by = .25), Mass = mean(data2$Mass[data2$Taxon=="J. h. oreganus group"]), Taxon = "J. h. oreganus group")
+df_hyemalis= data.frame(range = seq(from = min(data2$range), to = max(data2$range), by = .25), Mass = mean(data2$Mass[data2$Taxon=="J. h. hyemalis"]), Taxon = "J. h. hyemalis")
+df_palliatus = data.frame(range = seq(from = min(data2$range), to = max(data2$range), by = .25), Mass = mean(data2$Mass[data2$Taxon=="J. p. palliatus"]), Taxon = "J. p. palliatus")
 
-df_GH$prediction<-predict(lm(VO2max~SMR_Mass + Taxon * range, data2), newdata=df_GH, type="response")
-df_PS$prediction<-predict(lm(VO2max~SMR_Mass + Taxon * range, data2), newdata=df_PS, type="response")
-df_OR$prediction<-predict(lm(VO2max~SMR_Mass + Taxon * range, data2), newdata=df_OR, type="response")
-df_SC$prediction<-predict(lm(VO2max~SMR_Mass + Taxon * range, data2), newdata=df_SC, type="response")
-df_YE$prediction<-predict(lm(VO2max~SMR_Mass + Taxon * range, data2), newdata=df_YE, type="response")
+df_caniceps$prediction<-predict(lm(Msum~Mass + Taxon * range, data2), newdata=df_caniceps, type="response")
+df_mearnsi$prediction<-predict(lm(Msum~Mass + Taxon * range, data2), newdata=df_mearnsi, type="response")
+df_oreganus$prediction<-predict(lm(Msum~Mass + Taxon * range, data2), newdata=df_oreganus, type="response")
+df_hyemalis$prediction<-predict(lm(Msum~Mass + Taxon * range, data2), newdata=df_hyemalis, type="response")
+df_palliatus$prediction<-predict(lm(Msum~Mass + Taxon * range, data2), newdata=df_palliatus, type="response")
 
 
 #Plot Figure 1
@@ -208,9 +207,9 @@ sites <- ggplot() +
 caniceps <- ggplot() + 
 	xlim(7,23) + ylim(1,11) +
 	xlab(expression(paste("Daily Temperature Range "( degree*C)))) + ylab("Msum") +
-	geom_point(data = data2[data2$Taxon=="J. h. caniceps" & data2$Season=="Summer",], aes(y=VO2max, x=range), color=pal[5], shape=19, size = 2.5) +
-	geom_point(data = data2[data2$Taxon=="J. h. caniceps" & data2$Season=="Winter",], aes(y=VO2max, x=range), shape=21, fill="white", color=pal[5], size = 2.5) + 
-	geom_abline(intercept = coef(lm(prediction~range, df_GH))[1], slope = coef(lm(prediction~range, df_GH))[2],  colour=pal[5], linetype=2, size = 1) + 		
+	geom_point(data = data2[data2$Taxon=="J. h. caniceps" & data2$Season=="Breeding",], aes(y=Msum, x=range), color=pal[5], shape=19, size = 2.5) +
+	geom_point(data = data2[data2$Taxon=="J. h. caniceps" & data2$Season=="Non-breeding",], aes(y=Msum, x=range), shape=21, fill="white", color=pal[5], size = 2.5) + 
+	geom_abline(intercept = coef(lm(prediction~range, df_caniceps))[1], slope = coef(lm(prediction~range, df_caniceps))[2],  colour=pal[5], linetype=2, size = 1) + 		
 	theme(panel.background=element_rect(fill="white"), plot.margin=unit(c(1,1,1,1),"cm")) + 
 	theme(axis.line = element_line(colour = "black")) +
 	theme(axis.title.y=element_text(margin=margin(0,10,0,0)), axis.title.x=element_text(margin=margin(10,0,0,0)))
@@ -218,9 +217,9 @@ caniceps <- ggplot() +
 
 hyemalis <- ggplot() + xlim(7,23) + ylim(1,11) +
 	xlab(expression(paste("Daily Temperature Range "( degree*C)))) + ylab("Msum") +
-	geom_point(data = data2[data2$Taxon=="J. h. hyemalis" & data2$Season=="Summer",], aes(y=VO2max, x=range), color=pal[1], shape=19, size = 2.5) +
-	geom_point(data = data2[data2$Taxon=="J. h. hyemalis" & data2$Season=="Winter",], aes(y=VO2max, x=range), shape=21, fill="white", color=pal[1], size = 2.5) + 
-	geom_abline(intercept = coef(lm(prediction~range, df_SC))[1], slope = coef(lm(prediction~range, df_SC))[2],  colour=pal[1], linetype=2, size = 1) + 		
+	geom_point(data = data2[data2$Taxon=="J. h. hyemalis" & data2$Season=="Breeding",], aes(y=Msum, x=range), color=pal[1], shape=19, size = 2.5) +
+	geom_point(data = data2[data2$Taxon=="J. h. hyemalis" & data2$Season=="Non-breeding",], aes(y=Msum, x=range), shape=21, fill="white", color=pal[1], size = 2.5) + 
+	geom_abline(intercept = coef(lm(prediction~range, df_hyemalis))[1], slope = coef(lm(prediction~range, df_hyemalis))[2],  colour=pal[1], linetype=2, size = 1) + 		
 	theme(panel.background=element_rect(fill="white"), plot.margin=unit(c(1,1,1,1),"cm")) + 
 	theme(axis.line = element_line(colour = "black")) +
 	theme(axis.title.y=element_text(margin=margin(0,10,0,0)), axis.title.x=element_text(margin=margin(10,0,0,0)))+
@@ -229,9 +228,9 @@ hyemalis <- ggplot() + xlim(7,23) + ylim(1,11) +
  
 mearnsi <- ggplot() + xlim(7,23) + ylim(1,11) +
 	xlab(expression(paste("Daily Temperature Range "( degree*C)))) + ylab("Msum") +
-	geom_point(data = data2[data2$Taxon=="J. h. mearnsi" & data2$Season=="Summer",], aes(y=VO2max, x=range), color=pal[2], shape=19, size = 2.5) +
-	geom_point(data = data2[data2$Taxon=="J. h. mearnsi" & data2$Season=="Winter",], aes(y=VO2max, x=range), shape=21, fill="white", color=pal[2], size = 2.5) + 
-	geom_abline(intercept = coef(lm(prediction~range, df_PS))[1], slope = coef(lm(prediction~range, df_PS))[2],  colour=pal[2], linetype=2, size = 1) + 		
+	geom_point(data = data2[data2$Taxon=="J. h. mearnsi" & data2$Season=="Breeding",], aes(y=Msum, x=range), color=pal[2], shape=19, size = 2.5) +
+	geom_point(data = data2[data2$Taxon=="J. h. mearnsi" & data2$Season=="Non-breeding",], aes(y=Msum, x=range), shape=21, fill="white", color=pal[2], size = 2.5) + 
+	geom_abline(intercept = coef(lm(prediction~range, df_mearnsi))[1], slope = coef(lm(prediction~range, df_mearnsi))[2],  colour=pal[2], linetype=2, size = 1) + 		
 	theme(panel.background=element_rect(fill="white"), plot.margin=unit(c(1,1,1,1),"cm")) + 
 	theme(axis.line = element_line(colour = "black")) +
 	theme(axis.title.y=element_text(margin=margin(0,10,0,0)), axis.title.x=element_text(margin=margin(10,0,0,0)))+
@@ -239,9 +238,9 @@ mearnsi <- ggplot() + xlim(7,23) + ylim(1,11) +
 
 oreganus <- ggplot() + xlim(7,23) + ylim(1,11) +
 	xlab(expression(paste("Daily Temperature Range "( degree*C)))) + ylab("Msum") +
-	geom_point(data = data2[data2$Taxon=="J. h. oreganus group" & data2$Season=="Summer",], aes(y=VO2max, x=range), color=pal[4], shape=19, size = 2.5) +
-	geom_point(data = data2[data2$Taxon=="J. h. oreganus group" & data2$Season=="Winter",], aes(y=VO2max, x=range), shape=21, fill="white", color=pal[4], size = 2.5) + 
-	geom_abline(intercept = coef(lm(prediction~range, df_OR))[1], slope = coef(lm(prediction~range, df_OR))[2],  colour=pal[4], linetype=2, size = 1) + 		
+	geom_point(data = data2[data2$Taxon=="J. h. oreganus group" & data2$Season=="Breeding",], aes(y=Msum, x=range), color=pal[4], shape=19, size = 2.5) +
+	geom_point(data = data2[data2$Taxon=="J. h. oreganus group" & data2$Season=="Non-breeding",], aes(y=Msum, x=range), shape=21, fill="white", color=pal[4], size = 2.5) + 
+	geom_abline(intercept = coef(lm(prediction~range, df_oreganus))[1], slope = coef(lm(prediction~range, df_oreganus))[2],  colour=pal[4], linetype=2, size = 1) + 		
 	theme(panel.background=element_rect(fill="white"), plot.margin=unit(c(1,1,1,1),"cm")) + 
 	theme(axis.line = element_line(colour = "black")) +
 	theme(axis.title.y=element_text(margin=margin(0,10,0,0)), axis.title.x=element_text(margin=margin(10,0,0,0)))+
@@ -249,9 +248,9 @@ oreganus <- ggplot() + xlim(7,23) + ylim(1,11) +
 
 palliatus <- ggplot() + xlim(7,23) + ylim(1,11) +
 	xlab(expression(paste("Daily Temperature Range "( degree*C)))) + ylab("Msum") +
-	geom_point(data = data2[data2$Taxon=="J. p. palliatus" & data2$Season=="Summer",], aes(y=VO2max, x=range), color=pal[3], shape=19, size = 2.5) +
-	geom_point(data = data2[data2$Taxon=="J. p. palliatus" & data2$Season=="Winter",], aes(y=VO2max, x=range), shape=21, fill="white", color=pal[3], size = 2.5) + 
-	geom_abline(intercept = coef(lm(prediction~range, df_YE))[1], slope = coef(lm(prediction~range, df_YE))[2],  colour=pal[3], linetype=2, size = 1) + 		
+	geom_point(data = data2[data2$Taxon=="J. p. palliatus" & data2$Season=="Breeding",], aes(y=Msum, x=range), color=pal[3], shape=19, size = 2.5) +
+	geom_point(data = data2[data2$Taxon=="J. p. palliatus" & data2$Season=="Non-breeding",], aes(y=Msum, x=range), shape=21, fill="white", color=pal[3], size = 2.5) + 
+	geom_abline(intercept = coef(lm(prediction~range, df_palliatus))[1], slope = coef(lm(prediction~range, df_palliatus))[2],  colour=pal[3], linetype=2, size = 1) + 		
 	theme(panel.background=element_rect(fill="white"), plot.margin=unit(c(1,1,1,1),"cm")) + 
 	theme(axis.line = element_line(colour = "black")) +
 	theme(axis.title.y=element_text(margin=margin(0,10,0,0)), axis.title.x=element_text(margin=margin(10,0,0,0)))+
@@ -261,28 +260,28 @@ multiplot(sites,mearnsi,caniceps,oreganus,hyemalis,palliatus, cols=3)
 
 
 #Reaction norms vs. temperature range
-YE_slope <- (df_YE$prediction[2]-df_YE$prediction[1])/.25
-GH_slope <- (df_GH$prediction[2]-df_GH$prediction[1])/.25
-PS_slope <- (df_PS$prediction[2]-df_PS$prediction[1])/.25
-OR_slope <- (df_OR$prediction[2]-df_OR$prediction[1])/.25
-SC_slope <- (df_SC$prediction[2]-df_SC$prediction[1])/.25
+palliatus_slope <- (df_palliatus$prediction[2]-df_palliatus$prediction[1])/.25
+caniceps_slope <- (df_caniceps$prediction[2]-df_caniceps$prediction[1])/.25
+mearnsi_slope <- (df_mearnsi$prediction[2]-df_mearnsi$prediction[1])/.25
+oreganus_slope <- (df_oreganus$prediction[2]-df_oreganus$prediction[1])/.25
+hyemalis_slope <- (df_hyemalis$prediction[2]-df_hyemalis$prediction[1])/.25
 
-slopes <-c(YE_slope, GH_slope, PS_slope, OR_slope, SC_slope)
+slopes <-c(palliatus_slope, caniceps_slope, mearnsi_slope, oreganus_slope, hyemalis_slope)
 
 library(raster)
 data=getData('worldclim', var='bio', res=2.5, download=TRUE) #bioclim data
-r <- data[[7]] #using all bioclim variables
+r <- data[[7]] #Annual Temp Range
 names(r) <- "Annual.Range"
 coords <- data.frame(long=data2$Longitude,lat=data2$Latitude)
 points <- SpatialPoints(coords, proj4string = r@crs)
 values <- extract(r,points) #extract data for sample locales
 clim <- cbind.data.frame(coordinates(points),values)
-data2$Annual.Range <- clim$values/10
+data2$Annual.Range <- clim$values/10 #degrees C
 
-Annual.Range <- c(mean(data2$Annual.Range[data2$Taxon=="YE"]), mean(data2$Annual.Range[data2$Taxon=="GH"]), mean(data2$Annual.Range[data2$Taxon=="PS"]), mean(data2$Annual.Range[data2$Taxon=="OR"]), mean(data2$Annual.Range[data2$Taxon=="SC"]))
+Annual.Range <- c(mean(data2$Annual.Range[data2$Taxon=="J. p. palliatus"]), mean(data2$Annual.Range[data2$Taxon=="J. h. caniceps"]), mean(data2$Annual.Range[data2$Taxon=="J. h. mearnsi"]), mean(data2$Annual.Range[data2$Taxon=="J. h. oreganus group"]), mean(data2$Annual.Range[data2$Taxon=="J. h. hyemalis"]))
 
 summary(lm(slopes~Annual.Range))
-summary(lm(slopes[-3]~Annual.Range[-3]))
+summary(lm(slopes[-3]~Annual.Range[-3])) #w/o J. h. mearnsi
 
 #Plot Figure S1
 ggplot() + 
