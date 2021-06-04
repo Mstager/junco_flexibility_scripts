@@ -1,4 +1,4 @@
-#Commands to process (demultiplex, map, call variants, filter SNPs) one lane of PE RAD data from acclimated juncos: Stager M, Senner NR, Swanson DL, Carling MD, Grieves TJ, and Cheviron ZA. 2020. Temperature heterogeneity correlates with intraspecific variation in physiological flexibility in a small endotherm. bioRxiv.
+#Commands to process (demultiplex, map, call variants, filter SNPs) one lane of PE RAD data from acclimated juncos: Stager M, Senner NR, Swanson DL, Carling MD, Grieves TJ, and Cheviron ZA. 2021. Temperature heterogeneity correlates with intraspecific variation in physiological flexibility in a small endotherm. Nature Communications, accepted.
 
 #Raw reads used in this analysis can be found at: https://www.ncbi.nlm.nih.gov/sra/SRX9519064
 
