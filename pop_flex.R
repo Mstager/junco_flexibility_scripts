@@ -1,6 +1,6 @@
-#This script runs analyses to quantify differences among acclimated Junco populations as shown in: Stager M, Senner NR, Swanson DL, Carling MD, Grieves TJ, and Cheviron ZA. 2020. Temperature heterogeneity correlates with intraspecific variation in physiological flexibility in a small endotherm. bioRxiv.
+#This script runs analyses to quantify differences among acclimated Junco populations as shown in: Stager M, Senner NR, Swanson DL, Carling MD, Grieves TJ, and Cheviron ZA. 2021. Temperature heterogeneity correlates with intraspecific variation in physiological flexibility in a small endotherm. Nature Communications, accepted
 
-data<-read.csv("TableS6.csv") #this dataset is included in the supplementary materials
+data<-read.csv("Source_Data_Fig3") #this dataset is included in the Source Data file for Figure 3 accompanying the paper
 
 ################################################
 #Mantel Test
@@ -47,6 +47,25 @@ mantel.partial(gen_dist, env_dist, geo_dist) #IBE
 
 detach("package:psych", unload=TRUE) #psych library cannot be loaded to use rescale function from arm
 
+#Plot sampling sites (Fig 3a)
+library(wesanderson)
+
+ext = extent(-125,-95,30,50)
+c2 = crop(data,ext)
+c2.df = as.data.frame(c2, xy=TRUE)
+States <- map_data("state")
+
+ggplot() + 
+	geom_raster(data = c2.df, aes(x = x, y = y, fill = bio7)) +
+	coord_quickmap() + 
+	xlab("lat") + ylab("long") +
+	theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+	theme(panel.background=element_rect(fill="white")) + 
+	theme(axis.line = element_line(colour = "black")) +
+	geom_point(aes(y=lats, x=lons, size =2)) +
+	geom_polygon( data=States, aes(x=long, y=lat, group=group),color="black", fill=NA) +
+	scale_fill_gradientn(colours=wes_palette("Zissou1", 5,type="continuous"), na.value="white") + coord_cartesian(xlim=c(-125, -100), ylim = c(30, 50))
+
 ####################################################
 #Add temp range data from WorldClim in deg C to dataset
 data$range_temp[data$Population=="J. h. shufeldti"] <- values[1,7]/10
@@ -55,33 +74,34 @@ data$range_temp[data$Population=="J. p. palliatus"] <- values[3,7]/10
 data$range_temp[data$Population=="J. h. dorsalis"] <- values[4,7]/10
 data$range_temp[data$Population=="J. h. thurberi"] <- values[5,7]/10
 
-data$Population = factor(data$Population, levels=c("J. h. thurberi","J. h. shufeldti","J. p. palliatus","J. h. dorsalis","J. h. aikeni")) #Order dataulations from least to greatest temp range for plotting
-
 #######################################################################
-#test influence of start time on Msum at both sampling points
-data$Treatment=factor(data$Treatment, levels=c("Control", "Cold"))
+#influence of start time
 data$Start_Time_PreAcc_Msum_Trial<-as.integer(format(as.POSIXct(data$Start_Time_PreAcc_Msum_Trial, format="%H:%M"), "%H"))
 data$Start_Time_PostAcc_Msum_Trial<-as.integer(format(as.POSIXct(data$Start_Time_PostAcc_Msum_Trial, format="%H:%M"), "%H"))
-
+t.test(Start_Time_PostAcc_Msum_Trial~Treatment, data) #different
+summary(lm(PreAcc_Msum~Start_Time_PreAcc_Msum_Trial, data)) #no effect of start time on VO2
 summary(lm(PreAcc_Msum~Start_Time_PostAcc_Msum_Trial, data)) #no effect of start time on VO2
-summary(lm(PostAcc_Msum~Start_Time_PostAcc_Msum_Trial, data)) #no linear effect of start time on VO2
 
-#test for pre-treatment differences in Mass between treatment groups
-t.test(PreAcc_Mass_.g.~Treatment,data)
+#####################################
+#Calculate difference in Msum with acclimation (post - pre-acclimation values)
+data$delta_Msum = data$PostAcc_Msum - data$PreAcc_Msum
 
-#test for pre-treatment differences in Msum between treatment groups
-t.test(PreAcc_Msum~Treatment,data)
+#coefficients of variation
+trange <- c(data$range_temp[data$Population=="J. h. thurberi"][1], data$range_temp[data$Population=="J. h. shufeldti"][1], data$range_temp[data$Population=="J. p. palliatus"][1], data$range_temp[data$Population=="J. h. dorsalis"][1], data$range_temp[data$Population=="J. h. aikeni"][1])
 
-#test for linear effect of native temperature range on Mass before acclimation
-summary(lm(PreAcc_Mass_.g.~range_temp,data)) 
+#Cold birds CVs
+cvs <- c(cv(data$delta_Msum[data$Population=="J. h. thurberi" & data$Treatment=="Cold"]), cv(data$delta_Msum[data$Population=="J. h. shufeldti" & data$Treatment=="Cold"]), cv(data$delta_Msum[data$Population=="J. p. palliatus" & data$Treatment=="Cold"]), cv(data$delta_Msum[data$Population=="J. h. dorsalis" & data$Treatment=="Cold"]), cv(data$delta_Msum[data$Population=="J. h. aikeni" & data$Treatment=="Cold"]))
 
-#test for linear effect of native temperature range on Msum before acclimation
-summary(lm(PreAcc_Msum~range_temp,data))
+summary(lm(cvs~trange))
 
+#Control birds
+cvs <- c(cv(data$delta_Msum[data$Population=="J. h. thurberi" & data$Treatment=="Control"]), cv(data$delta_Msum[data$Population=="J. h. shufeldti" & data$Treatment=="Control"]), cv(data$delta_Msum[data$Population=="J. p. palliatus" & data$Treatment=="Control"]), cv(data$delta_Msum[data$Population=="J. h. dorsalis" & data$Treatment=="Control"]), cv(data$delta_Msum[data$Population=="J. h. aikeni" & data$Treatment=="Control"]))
+
+summary(lm(cvs~trange))
 ################################################
 #Test for effect of temperature range on acclimation ability while controlling for population differentiation with MCMC GLMM
 
-#First, use Fst values (listed in TableS6 or output from vcftools in accompanying script) to manually construct pairwise matrix for each individual
+#First, use Fst values (Shown in Figure 3 or output from vcftools in accompanying script) to manually construct pairwise matrix for each individual
 data_fst = matrix(nrow=nrow(data), ncol=nrow(data))
 for (i in 1:nrow(data_fst)){
 	for (j in 1:nrow(data_fst)){
@@ -101,19 +121,39 @@ for (i in 1:nrow(data_fst)){
 
 data$fst = data_fst #add this matrix to the dataframe
 
-#Calculate difference in Msum with acclimation (post - pre-acclimation values)
-data$delta_Msum = data$PostAcc_Msum - data$PreAcc_Msum
-
 #Run MCMC GLMM model
 library(MCMCglmm)
 library(arm) #includes function rescale() for standardizing according to Gelman (2008)
 
-mod1 <- (MCMCglmm(fixed=delta_Msum~rescale(PreAcc_Mass_.g.)+rescale(range_temp)*Treatment, random = ~fst, data = data, nitt=1000000, burnin=10000, thin=100)) 
+#pre-treatment differences in mass?
+summary(MCMCglmm(fixed=PreAcc_Mass_.g.~Treatment, random = ~fst, data = data, nitt=1000000, burnin=10000, thin=100, verbose=FALSE))
+
+#pre-treatment differences in Msum?
+summary(MCMCglmm(fixed=PreAcc_Msum~Treatment, random = ~fst, data = data, nitt=1000000, burnin=10000, thin=100, verbose=FALSE))
+
+#pre-treatment differences in Mass by temp range?
+summary(MCMCglmm(fixed=PreAcc_Mass_.g.~rescale(range_temp), random = ~fst, data = data, nitt=1000000, burnin=10000, thin=100, verbose=FALSE))
+
+#pre-treatment differences in Msum by temp range?
+summary(MCMCglmm(fixed=PreAcc_Msum~rescale(range_temp), random = ~fst, data = data, nitt=1000000, burnin=10000, thin=100, verbose=FALSE))
+
+#effect of capture season on pre-acclimation Msum?
+summary(MCMCglmm(fixed=PreAcc_Msum~rescale(PreAcc_Mass_.g.)+Capture.Season, random = ~fst, data = data, nitt=1000000, burnin=10000, thin=100, verbose=FALSE))
+
+#VO2max at different temps in CTRL birds
+t.test(pop$SMR1_VO2max[pop$Treatment=="Control"],pop$SMR2_VO2max[pop$Treatment=="Control"], paired=TRUE)
+
+#Msum flexibility
+mod1 <- (MCMCglmm(fixed=delta_Msum~rescale(PreAcc_Mass_.g.)+rescale(range_temp)*Treatment, random = ~fst, data = data, nitt=1000000, burnin=10000, thin=100, verbose=FALSE)) 
 summary(mod1)
-plot(mod1)
+#plot(mod1)
 
-#plot delta Msum among groups
-library(ggplot2)
+#effect of capture season on flexibility in Msum?
+summary(MCMCglmm(fixed=delta_Msum~rescale(PreAcc_Mass_.g.)+Capture.Season, random = ~fst, data = data, nitt=1000000, burnin=10000, thin=100, verbose=FALSE))
 
-ggplot(data, aes(x=factor(Population), y=(delta_Msum), fill=Treatment))+ geom_hline(yintercept=0, color="grey") + geom_boxplot(varwidth=TRUE)+ xlab("Population") + ylab("Delta Thermogenic Capacity (ml O2/min)") + labs(fill="Legend")+ theme(panel.background=element_rect(fill="white"), plot.margin=unit(c(1,1,1,1),"cm"))+ theme(axis.title.y=element_text(margin=margin(0,20,0,0)), axis.title.x=element_text(margin=margin(20,0,0,0)))+theme(legend.position="none")+scale_fill_manual(values=c("indianred2", "dodgerblue3"))
+#Order populations from least to greatest temp range for plotting
+data$Population = factor(data$Population, levels=c("J. h. thurberi","J. h. shufeldti","J. p. palliatus","J. h. dorsalis","J. h. aikeni"))
+data$Treatment=factor(data$Treatment, levels=c("Control", "Cold"))
 
+#Plot Fig3b
+ggplot(data, aes(x=factor(Population), y=(delta_Msum), colour=Treatment))+ geom_hline(yintercept=0, color="grey") + geom_boxplot(outlier.shape = NA)+ geom_point(position=position_jitterdodge(dodge.width=.75, jitter.width=.2),alpha=0.5)  + xlab("Population") + ylab("Delta Thermogenic Capacity (ml O2/min)") + labs(fill="Legend")+ theme(panel.background=element_rect(fill="white"), plot.margin=unit(c(1,1,1,1),"cm"))+ theme(axis.title.y=element_text(margin=margin(0,20,0,0)), axis.title.x=element_text(margin=margin(20,0,0,0)))+theme(legend.position="none")+scale_colour_manual(values=c("indianred2", "dodgerblue3"))
