@@ -2,7 +2,7 @@
 
 This repository includes scripts to replicate the analyses in:
 
-**Stager M, Senner NR, Swanson DL, Carling MD, Eddy DK, Grieves TJ, and Cheviron ZA. 2020. Temperature heterogeneity correlates with intraspecific variation in physiological flexibility in a small endotherm. bioRxiv: 10.1101/2020.11.16.383877.**
+**Stager M, Senner NR, Swanson DL, Carling MD, Eddy DK, Grieves TJ, and Cheviron ZA. 2021. Temperature heterogeneity correlates with intraspecific variation in physiological flexibility in a small endotherm. Nature Communications, accepted.**
 
 
 Included are:
@@ -10,7 +10,7 @@ Included are:
 * junco_insitu.R  
   * *R script for running analyses on in situ phenotypic data from 292 individuals*
   * *This script draws on TableS1.csv from the Supplementary Materials*
-  * *This script takes minutes to run on my dinosaur of a laptop (2012 MacBook Pro)*
+  * *This script takes minutes to run on a 2012 MacBook Pro*
 
 * RADSeq_processing 
   * *Commands for processing RAD-Seq data from 192 Junco sp. (demultiplexing w/ STACKS ver. 2.1, map w/ bwa, variant calling w/ STACKS, filtering w/ vcftools)*
@@ -24,12 +24,12 @@ Included are:
   * *R script to run redundancy analysis on population genetic data*
   * *This script uses a plink file containing 21971 SNPs generated with above RADSeq_processing commands*
   * *This script draws on TableS5.csv from the Supplementary Materials*
-  * *This script takes minutes to run on my dinosaur (2012 MacBook Pro)*
+  * *This script takes minutes to run on a 2012 MacBook Pro*
   
 * pop_flex.R 
   * *R script for running analyses on phenotypic data from acclimated individuals*
   * *This script draws on TableS6.csv from the Supplementary Materials*
-  * *This script takes minutes to run on my dinosaur (2012 MacBook Pro)*
+  * *This script takes minutes to run on a 2012 MacBook Pro*
 
 * RADSeq_PE_processing 
   * *Commands for processing paired-end RAD-Seq data from 95 individuals used in acclimation study*
