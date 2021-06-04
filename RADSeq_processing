@@ -1,4 +1,4 @@
-#Commands to process (demultiplex, map, call variants, filter SNPs) two lanes of Junco RAD data, used in RDA in: Stager M, Senner NR, Swanson DL, Carling MD, Grieves TJ, and Cheviron ZA. 2020. Temperature heterogeneity correlates with intraspecific variation in physiological flexibility in a small endotherm. bioRxiv.
+#Commands to process (demultiplex, map, call variants, filter SNPs) two lanes of Junco RAD data, used in RDA in: Stager M, Senner NR, Swanson DL, Carling MD, Grieves TJ, and Cheviron ZA. 2021. Temperature heterogeneity correlates with intraspecific variation in physiological flexibility in a small endotherm. Nature Communications, accepted.
 
 #Raw reads for SAMN16793657 can be found at: https://www.ncbi.nlm.nih.gov/sra/SRX9519062
 #Raw reads for SAMN16793658 can be found at: https://www.ncbi.nlm.nih.gov/sra/SRX9519063
