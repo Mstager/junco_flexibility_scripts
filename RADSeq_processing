@@ -23,7 +23,7 @@ mkdir bam_sorted
 #SNPS across the genus
 
 #execute STACKS variant calling using 186 individuals (removed 6 w/ less than 100,000 reads mapped): 
-ref_map.pl --samples ./bam_sorted --popmap ./Pop_map186.txt -o ./ -T 25 -X "populations: -p 4 --vcf --hwe --write_random_snp" 
+ref_map.pl --samples ./bam_sorted --popmap ./Pop_map186.txt -o ./ -T 25 -X "populations: -p 5 --vcf --hwe --write_random_snp" 
 
 #filtering in vcftools to remove indels, non-biallelic sites, all sites with <5× and >50× coverage, minor allele count below 3 and more than 50% missing data
 vcftools --vcf populations.snps.vcf  --max-missing 0.5 --min-meanDP 5 --max-meanDP 50 --mac 3  --remove-indels --min-alleles 2 --max-alleles 2 --recode --recode-INFO-all --out filtered_snps 
