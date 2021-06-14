@@ -1,4 +1,4 @@
-#This script runs a redundancy analysis to identify genotype-environment associations, as shown in: Stager M, Senner NR, Swanson DL, Carling MD, Grieves TJ, and Cheviron ZA. In revision. Temperature heterogeneity correlates with intraspecific variation in physiological flexibility in a small endotherm.
+#This script runs a redundancy analysis to identify genotype-environment associations, as shown in: Stager M, Senner NR, Swanson DL, Carling MD, Grieves TJ, and Cheviron ZA. 2021. Temperature heterogeneity correlates with intraspecific variation in physiological flexibility in a small endotherm. Nature Communications, accepted.
 
 #This workflow has been modified from Forester et al. 2018's tutorial (available at https://popgen.nescent.org/2018-03-27_RDA_GEA.html) to incorporate variance partitioning
 
@@ -12,7 +12,7 @@ SNPS <- read.PLINK("Junco_SNPs.raw") #output from processing RAD data
 gen <- as.data.frame(SNPS)
 dim(gen)
 
-geo<-read.csv("Source_Data_Fig2.csv") #georeferenced samples listed in Source Data for Figure 2
+geo<-read.csv("Source_Data_Fig2.csv") #georeferenced samples listed in Source Data Sheet 2 ("Fig.2")
 geo <- geo[geo$Catalog_number!="6056" & geo$Catalog_number!="110508" & geo$Catalog_number!="117690" & geo$Catalog_number!="118252" & geo$Catalog_number!="229176" & geo$Catalog_number!="231996" & geo$Catalog_number!="648103" & geo$Catalog_number!="648671" & geo$Catalog_number!="232004" & geo$Catalog_number!="183387" & geo$Catalog_number!="232018",] #remove 11 individuals that were filtered during RAD processing
 
 sum(is.na(gen)) #total number of sites to impute
