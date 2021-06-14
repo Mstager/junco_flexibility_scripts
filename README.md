@@ -9,7 +9,7 @@ Included are:
 
 * junco_insitu.R  
   * *R script for running analyses on in situ phenotypic data from 292 individuals*
-  * *This script draws on TableS1.csv from the Supplementary Materials*
+  * *This script draws on Sheet1 in the Source Data file*
   * *This script takes minutes to run on a 2012 MacBook Pro*
 
 * RADSeq_processing 
@@ -23,18 +23,18 @@ Included are:
 * RDA.R 
   * *R script to run redundancy analysis on population genetic data*
   * *This script uses a plink file containing 21971 SNPs generated with above RADSeq_processing commands*
-  * *This script draws on TableS5.csv from the Supplementary Materials*
+  * *This script draws on Sheet2 in the Source Data file*
   * *This script takes minutes to run on a 2012 MacBook Pro*
   
 * pop_flex.R 
   * *R script for running analyses on phenotypic data from acclimated individuals*
-  * *This script draws on TableS6.csv from the Supplementary Materials*
+  * *This script draws on Sheet3 in the Source Data file*
   * *This script takes minutes to run on a 2012 MacBook Pro*
 
 * RADSeq_PE_processing 
   * *Commands for processing paired-end RAD-Seq data from 95 individuals used in acclimation study*
   * *Associated bash commands in genome_map_pe.sh, convertsam.sh, sort_bam.sh, index_bam.sh, and merge_bam.sh*
   * *Raw reads used here are available from the NCBI Sequence Read Archive (PRJNA678344)*
-  * *Barcodes provided in Junco_barcodes_SAMN16793659.txt (also in TableS6.csv in the Supp. Mat.)*
+  * *Barcodes provided in Junco_barcodes_SAMN16793659.txt (also in Sheet3 in the Source Data file)*
   * *Popmap_acc.txt is a population map used by STACKS ver 2.1 for 89 individuals (excluding 6 individuals that failed to sequence); this file can be split into population-specific files for use in vcftools when calculating pairwise FST*
    * *This script can take a couple days to run on a server with 32 cores, ~386 GB RAM*
