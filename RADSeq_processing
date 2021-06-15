@@ -41,8 +41,8 @@ vcfallelicprimitives filtered_snps3.recode.vcf --keep-info --keep-geno > filtere
 
 #filter hwe by population using script written by Chris Hollenbeck
 #script available here: https://github.com/jpuritz/dDocent/raw/master/scripts/filter_hwe_by_pop.pl
-./filter_hwe_by_pop.pl -v filtered_snps.prim.vcf -p ./Pop_map186.txt -o filtered_snps4
+./filter_hwe_by_pop.pl -v filtered_snps.prim.vcf -p ./Pop_map186.txt -o Junco_SNPs
 
 
 #plink format for R adegenet
-vcftools --vcf filtered_snps4.recode.vcf --plink
+vcftools --vcf Junco_SNPs.recode.vcf --plink
