@@ -45,6 +45,14 @@ values <- extract(r,points) #extract data for sample locales
 clim <- cbind.data.frame(coordinates(points),values)
 clim $sampleID <- geo$Catalog_number #add catalog number
 identical(rownames(gen.imp), clim$sampleID) #in same order as SNP data?
+                                
+#Plot sampling locations overlaid on Seasonality map (Fig 2a)
+count=as.data.frame(table(round(geo$Latitude,1), round(geo$Longitude,1), geo$Plot_color))
+count=count[!(count$Freq==0),]
+
+plot(data$bio7, xlim=c(-170,-53), ylim=c(7,75),bty="n", col=gray.colors(10, rev=TRUE)) #Temp Annual Range of NA
+points(y=c(as.numeric(as.character(count$Var1))), x=c(as.numeric(as.character(count$Var2))),  pch=21, bg=as.character(count$Var3), col="black", cex=1+(count$Freq/2.5))
+
 
 library(arm)
 clim = data.frame(apply(clim, 2, rescale))
@@ -73,6 +81,7 @@ signif.full.prda #p = 0.001
 signif.axis.prda <- anova.cca(junco.prda, by="axis", parallel=getOption("mc.cores"),  permutations=how(nperm=299)) #may be able to up permutations but intensive
 signif.axis.prda #R1 - R3, p = 0.01
 
+#Variance Partitioning
 varpart(gen.imp, ~Diurnal.Range, ~ Annual.Range + Temp.WettestQ + Temp.DriestQ + Temp.WarmestQ + Min.Precip + Precip.WarmestQ + Precip.ColdestQ, ~PC1 + PC2, data=pred)
 
 varpart(gen.imp, ~Annual.Range, ~ Diurnal.Range + Temp.WettestQ + Temp.DriestQ + Temp.WarmestQ + Min.Precip + Precip.WarmestQ + Precip.ColdestQ, ~PC1 + PC2, data=pred)
@@ -92,7 +101,7 @@ varpart(gen.imp, ~Precip.ColdestQ, ~Diurnal.Range + Annual.Range + Temp.WettestQ
 varpart(gen.imp, ~PC1+PC2, ~Diurnal.Range + Annual.Range + Temp.WettestQ + Temp.DriestQ+  Temp.WarmestQ + Min.Precip  + Precip.WarmestQ + Precip.ColdestQ, data=pred)
 
 
-#Plot
+#Plot PCAs (Fig 2b and Fig2c)
 temp <- as.integer(as.factor(geo$Subspecies))
 myCol <- c("gray48","darkolivegreen", "yellowgreen", "darkseagreen1","cadetblue","cyan", "dodgerblue","blue2","purple4","darkorchid1", "plum3", "rosybrown", "coral2", "red", "red4", "darkgoldenrod","darkorange","goldenrod1","yellow2", "bisque", "white")[temp] #alphabetical order
 
@@ -104,6 +113,7 @@ plot(pca_all$li[,c(3,4)], col="gray32", bg=myCol, pch=21, cex=2, xlab=paste("PC3
 plot.new()
 legend("left",fill=unique(myCol)[order(unique(geo$Subspecies))], legend=unique(geo$Subspecies)[order(unique(geo$Subspecies))], bty="n", cex=1.2,text.font=3)
 
+#Plot RDAs (Fig 2d and Fig 2e)
 #1 and 2
 plot(junco.prda, type="n", scaling=3, choices=c(1,2))
 points(junco.prda, display="sites", pch=21, cex=2, col="gray32", scaling=3, bg=myCol) # the juncos
