@@ -19,11 +19,11 @@ sum(is.na(gen)) #total number of sites to impute
 sum(is.na(gen)) / (dim(gen)[1]*dim(gen)[2]) #percentage of total
 
 #impute using most common genotype for that population
-gen.imp <- apply(gen[geo$specificepithet=="J. hyemalis",], 2, function(x) replace(x, is.na(x), as.numeric(names(which.max(table(x))))))
-gen.imp <- rbind(gen.imp, apply(gen[geo$specificepithet=="J. insularis",], 2, function(x) replace(x, is.na(x), as.numeric(names(which.max(table(x)))))))
-gen.imp <- rbind(gen.imp, apply(gen[geo$specificepithet=="J. phaeonotus",], 2, function(x) replace(x, is.na(x), as.numeric(names(which.max(table(x)))))))
-gen.imp <- rbind(gen.imp, apply(gen[geo$specificepithet=="J. vulcani",], 2, function(x) replace(x, is.na(x), as.numeric(names(which.max(table(x)))))))
-gen.imp <- rbind(gen.imp, apply(gen[geo$specificepithet=="J. bairdi",], 2, function(x) replace(x, is.na(x), as.numeric(names(which.max(table(x)))))))
+gen.imp <- apply(gen[geo$Species=="hyemalis",], 2, function(x) replace(x, is.na(x), as.numeric(names(which.max(table(x))))))
+gen.imp <- rbind(gen.imp, apply(gen[geo$Species=="insularis",], 2, function(x) replace(x, is.na(x), as.numeric(names(which.max(table(x)))))))
+gen.imp <- rbind(gen.imp, apply(gen[geo$Species=="phaeonotus",], 2, function(x) replace(x, is.na(x), as.numeric(names(which.max(table(x)))))))
+gen.imp <- rbind(gen.imp, apply(gen[geo$Species=="vulcani",], 2, function(x) replace(x, is.na(x), as.numeric(names(which.max(table(x)))))))
+gen.imp <- rbind(gen.imp, apply(gen[geo$Species=="bairdi",], 2, function(x) replace(x, is.na(x), as.numeric(names(which.max(table(x)))))))
 
 gen.imp = gen.imp[row.names(gen.imp)[match(row.names(gen), row.names(gen.imp))],]
 identical(row.names(gen.imp[row.names(gen.imp)[match(row.names(gen), row.names(gen.imp))],]), geo$Catalog_number) #make sure files are in the same order
@@ -39,11 +39,11 @@ library(raster)
 data=getData('worldclim', var='bio', res=2.5, download=TRUE) #bioclim data
 r <- data[[c(1:19)]] #using all bioclim variables
 names(r) <- c("Mean.Temp", "Diurnal.Range", "Isothermality", "Temp.Seasonality", "Max.Temp", "Min.Temp", "Annual.Range", "Temp.WettestQ", "Temp.DriestQ", "Temp.WarmestQ", "Temp.ColdestQ", "Annual.Precip", "Max.Precip", "Min.Precip", "Precip.Seasonality", "Precip.WettestQ", "Precip.DriestQ", "Precip.WarmestQ", "Precip.ColdestQ") #bioclim variable names
-coords <- data.frame(long=geo$decimallongitude,lat=geo$decimallatitude)
+coords <- data.frame(long=geo$Longitude,lat=geo$Latitude)
 points <- SpatialPoints(coords, proj4string = r@crs)
 values <- extract(r,points) #extract data for sample locales
 clim <- cbind.data.frame(coordinates(points),values)
-clim $sampleID <- geo$catalognumber #add catalog number
+clim $sampleID <- geo$Catalog_number #add catalog number
 identical(rownames(gen.imp), clim$sampleID) #in same order as SNP data?
 
 library(arm)
@@ -93,8 +93,8 @@ varpart(gen.imp, ~PC1+PC2, ~Diurnal.Range + Annual.Range + Temp.WettestQ + Temp.
 
 
 #Plot
-temp <- as.integer(as.factor(geo$infraspecificepithet))
-myCol <- c("gray48","darkolivegreen", "yellowgreen", "darkseagreen1","cadetblue","cyan", "dodgerblue","blue2","purple4","darkorchid1", "plum3", "thistle3", "coral2", "red", "firebrick3", "darkgoldenrod","darkorange","goldenrod1","yellow2", "bisque", "white")[temp] #alphabetical order
+temp <- as.integer(as.factor(geo$Subspecies))
+myCol <- c("gray48","darkolivegreen", "yellowgreen", "darkseagreen1","cadetblue","cyan", "dodgerblue","blue2","purple4","darkorchid1", "plum3", "rosybrown", "coral2", "red", "red4", "darkgoldenrod","darkorange","goldenrod1","yellow2", "bisque", "white")[temp] #alphabetical order
 
 par(mfrow=c(2,3))
 plot(pca_all$li[,1:2], col="gray32", bg=myCol, pch=21, cex=2, xlab=paste("PC1 (", round(get_eig(pca_all)[1,2],1), "%)", sep=""), ylab=paste("PC2 (", round(get_eig(pca_all)[2,2],1), "%)", sep=""))
@@ -102,7 +102,7 @@ plot(pca_all$li[,1:2], col="gray32", bg=myCol, pch=21, cex=2, xlab=paste("PC1 ("
 plot(pca_all$li[,c(3,4)], col="gray32", bg=myCol, pch=21, cex=2, xlab=paste("PC3 (", round(get_eig(pca_all)[3,2],1), "%)", sep=""), ylab=paste("PC4(", round(get_eig(pca_all)[4,2],1), "%)", sep=""))
 
 plot.new()
-legend("left",fill=unique(myCol)[order(unique(geo$infraspecificepithet))], legend=unique(geo$infraspecificepithet)[order(unique(geo$infraspecificepithet))], bty="n", cex=1.2,text.font=3)
+legend("left",fill=unique(myCol)[order(unique(geo$Subspecies))], legend=unique(geo$Subspecies)[order(unique(geo$Subspecies))], bty="n", cex=1.2,text.font=3)
 
 #1 and 2
 plot(junco.prda, type="n", scaling=3, choices=c(1,2))
