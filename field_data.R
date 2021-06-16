@@ -187,7 +187,7 @@ data2$Taxon = factor(data2$Taxon, levels=c("J. p. palliatus","J. h. caniceps","J
 df$pal = c(3,3,3,3,5,5,5,5,1,4,4,2,1,1,2,2,2,2) #add colors to df
 
 
-#Map
+#Fig. 1a - Map
 library(mapdata); library(maptools)
 usa <- map_data("state")
 canada <- map_data("worldHires", "Canada")
@@ -204,6 +204,7 @@ sites <- ggplot() +
 	theme(axis.line = element_line(colour = "black")) +
 	theme(axis.title.y=element_text(margin=margin(0,10,0,0)), axis.title.x=element_text(margin=margin(10,0,0,0)))
 
+#Fig 1b - J. h. caniceps data
 caniceps <- ggplot() + 
 	xlim(7,23) + ylim(1,11) +
 	xlab(expression(paste("Daily Temperature Range "( degree*C)))) + ylab("Msum") +
@@ -214,7 +215,7 @@ caniceps <- ggplot() +
 	theme(axis.line = element_line(colour = "black")) +
 	theme(axis.title.y=element_text(margin=margin(0,10,0,0)), axis.title.x=element_text(margin=margin(10,0,0,0)))
 	
-
+#Fig 1c - J. h. hymealis data
 hyemalis <- ggplot() + xlim(7,23) + ylim(1,11) +
 	xlab(expression(paste("Daily Temperature Range "( degree*C)))) + ylab("Msum") +
 	geom_point(data = data2[data2$Taxon=="J. h. hyemalis" & data2$Season=="Breeding",], aes(y=Msum, x=range), color=pal[1], shape=19, size = 2.5) +
@@ -225,7 +226,7 @@ hyemalis <- ggplot() + xlim(7,23) + ylim(1,11) +
 	theme(axis.title.y=element_text(margin=margin(0,10,0,0)), axis.title.x=element_text(margin=margin(10,0,0,0)))+
 	theme(legend.position="none")
 	
- 
+#Fig 1d - J. h. mearnsi data 
 mearnsi <- ggplot() + xlim(7,23) + ylim(1,11) +
 	xlab(expression(paste("Daily Temperature Range "( degree*C)))) + ylab("Msum") +
 	geom_point(data = data2[data2$Taxon=="J. h. mearnsi" & data2$Season=="Breeding",], aes(y=Msum, x=range), color=pal[2], shape=19, size = 2.5) +
@@ -236,6 +237,7 @@ mearnsi <- ggplot() + xlim(7,23) + ylim(1,11) +
 	theme(axis.title.y=element_text(margin=margin(0,10,0,0)), axis.title.x=element_text(margin=margin(10,0,0,0)))+
 	theme(legend.position="none")
 
+#Fig 1e - J. h. oreganus group data
 oreganus <- ggplot() + xlim(7,23) + ylim(1,11) +
 	xlab(expression(paste("Daily Temperature Range "( degree*C)))) + ylab("Msum") +
 	geom_point(data = data2[data2$Taxon=="J. h. oreganus group" & data2$Season=="Breeding",], aes(y=Msum, x=range), color=pal[4], shape=19, size = 2.5) +
@@ -246,6 +248,7 @@ oreganus <- ggplot() + xlim(7,23) + ylim(1,11) +
 	theme(axis.title.y=element_text(margin=margin(0,10,0,0)), axis.title.x=element_text(margin=margin(10,0,0,0)))+
 	theme(legend.position="none")
 
+#Fig 1f - J. p. palliatus data
 palliatus <- ggplot() + xlim(7,23) + ylim(1,11) +
 	xlab(expression(paste("Daily Temperature Range "( degree*C)))) + ylab("Msum") +
 	geom_point(data = data2[data2$Taxon=="J. p. palliatus" & data2$Season=="Breeding",], aes(y=Msum, x=range), color=pal[3], shape=19, size = 2.5) +
@@ -256,7 +259,7 @@ palliatus <- ggplot() + xlim(7,23) + ylim(1,11) +
 	theme(axis.title.y=element_text(margin=margin(0,10,0,0)), axis.title.x=element_text(margin=margin(10,0,0,0)))+
 	theme(legend.position="none")
 
-multiplot(sites,mearnsi,caniceps,oreganus,hyemalis,palliatus, cols=3)
+multiplot(sites,mearnsi,caniceps,oreganus,hyemalis,palliatus, cols=3) #plot six-paneled figure
 
 
 #Reaction norms vs. temperature range
