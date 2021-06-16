@@ -102,7 +102,7 @@ varpart(gen.imp, ~PC1+PC2, ~Diurnal.Range + Annual.Range + Temp.WettestQ + Temp.
 
 
 #Plot PCAs (Fig 2b and Fig2c)
-temp <- as.integer(as.factor(geo$Subspecies))
+temp <- as.integer(as.factor(paste(geo$Species,geo$Subspecies)))
 myCol <- c("gray48","darkolivegreen", "yellowgreen", "darkseagreen1","cadetblue","cyan", "dodgerblue","blue2","purple4","darkorchid1", "plum3", "rosybrown", "coral2", "red", "red4", "darkgoldenrod","darkorange","goldenrod1","yellow2", "bisque", "white")[temp] #alphabetical order
 
 par(mfrow=c(2,3))
