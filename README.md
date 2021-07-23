@@ -7,7 +7,7 @@ This repository includes scripts to replicate the analyses in:
 
 Included are:
 
-* junco_insitu.R  
+* field_data.R  
   * *R script for running analyses on phenotypic data from 335 individuals assayed in the field*
   * *This script draws on Sheet1 in the Source Data file*
   * *This script takes minutes to run on a 2012 MacBook Pro*
