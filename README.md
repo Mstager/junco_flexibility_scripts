@@ -2,7 +2,7 @@
 
 This repository includes scripts to replicate the analyses in:
 
-**Stager M, Senner NR, Swanson DL, Carling MD, Eddy DK, Grieves TJ, and Cheviron ZA. 2021. Temperature heterogeneity correlates with intraspecific variation in physiological flexibility in a small endotherm. Nature Communications, accepted.**
+**Stager M, Senner NR, Swanson DL, Carling MD, Eddy DK, Grieves TJ, and Cheviron ZA. 2021. Temperature heterogeneity correlates with intraspecific variation in physiological flexibility in a small endotherm. Nature Communications, 12: 4401. https://www.nature.com/articles/s41467-021-24588-6**
 
 
 Included are:
